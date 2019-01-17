@@ -3,7 +3,9 @@ import os
 from flask import Flask, request, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 
-IMAGES_FOLDER = '../images'
+#IMAGES_FOLDER = '../images'
+# pythonanywhere path
+IMAGES_FOLDER = '/home/chipos/flaskimageupload/images'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
