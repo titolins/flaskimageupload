@@ -32,14 +32,14 @@ def allowed_file(filename):
 @app.route('/classify', methods=['GET'])
 def classify():
     # get the file info
-    img_info = request.get_json()
+    img_data = request.get_json()
     # supposing the json format to be as follows
     '''
     {
         'data': []float (img_data)
     }
     '''
-    res = cls.predict(img_info)
+    res = cls.predict(img_data)
     return jsonify(
         status='ok',
         message='image prediction succesful'.format(filename),
