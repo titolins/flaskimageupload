@@ -2,8 +2,8 @@ import os
 
 from flask import Flask, request, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
-import numpy as np
 from PIL import Image
+import numpy as np
 
 import pickle
 
@@ -12,6 +12,7 @@ import pickle
 #IMAGES_FOLDER = '/home/chipos/flaskimageupload/images'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 MODEL_FILE = 'finalized_model.pkl'
+N_COLS = 612900
 
 
 # create flask app and set config
@@ -30,7 +31,11 @@ def allowed_file(filename):
 
 def load_image_data(file_path):
     pic = Image.open(file)
-    return np.array(pic).flatten()
+    img_data = list(np.array(pic).flatten())
+    for i in range(N_COLS - len(img_data)):
+        img_data.append(0)
+
+    return np.array(img_data)
 
 
 ########### routes ##############
@@ -45,20 +50,15 @@ def classify():
         )
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
+    img = load_image_data(file)
 
-    print('===========================================')
-    print('DEBUG')
-    print('===========================================')
-    print(file)
-    print(type(file))
-    img = Image.open(file)
-    print(img)
-    print('===========================================')
+    res = cls.predict(img)
+
     #res = cls.predict(img_data)
     return jsonify(
-        status='ok',)
-        #message='image prediction succesful'.format(filename),
-        #pred='{}'.format(res))
+        status='ok',
+        message='image prediction succesful'.format(res),
+        pred='{}'.format(res))
 
 
 @app.route('/upload', methods=['POST'])
