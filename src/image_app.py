@@ -67,7 +67,8 @@ def upload_file():
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['IMAGES_FOLDER'], filename))
+    file.save(os.path.join(
+        app.config['ROOT_PATH'], app.config['IMAGES_FOLDER'], filename))
     '''
     #TO GET THE PATH, USE THIS METHOD BELOW
     return jsonify(
