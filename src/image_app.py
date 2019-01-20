@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, request, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
+import numpy as np
 
 import pickle
 
@@ -26,24 +27,34 @@ def allowed_file(filename):
     return '.' in filename and \
        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def load_image_data(file_path):
+    pic = Image.open(file)
+    return np.array(pic).flatten()
 
 
 ########### routes ##############
 @app.route('/classify', methods=['GET'])
 def classify():
-    # get the file info
-    img_data = request.get_json()
-    # supposing the json format to be as follows
+    print(request.files)
+    file = request.files['image'] if 'image' in request.files else None
+    if file is None or request.files['image'].filename == '':
+        return jsonify(
+            status='error',
+            message='image is None or filename = \'\''
+        )
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+
+    print(file)
+    print(type(file))
+    #res = cls.predict(img_data)
     '''
-    {
-        'data': []float (img_data)
-    }
-    '''
-    res = cls.predict(img_data)
     return jsonify(
         status='ok',
         message='image prediction succesful'.format(filename),
         pred='{}'.format(res))
+    '''
+    return
 
 
 @app.route('/upload', methods=['POST'])
