@@ -53,9 +53,9 @@ def classify():
     print('===========================================')
     #res = cls.predict(img_data)
     return jsonify(
-        status='ok',
-        message='image prediction succesful'.format(filename),
-        pred='{}'.format(res))
+        status='ok',)
+        #message='image prediction succesful'.format(filename),
+        #pred='{}'.format(res))
 
 
 @app.route('/upload', methods=['POST'])
