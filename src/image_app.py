@@ -3,19 +3,48 @@ import os
 from flask import Flask, request, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 
+import pickle
+
 #IMAGES_FOLDER = '../images'
 # pythonanywhere path
 IMAGES_FOLDER = '/home/chipos/flaskimageupload/images'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+MODEL_FILE = 'finalized_model.pkl'
 
+# load the model from disk
+csl = pickle.load(open(MODEL_FILE, 'rb'))
+
+# create flask app and set config
 app = Flask(__name__)
 app.config['IMAGES_FOLDER'] = IMAGES_FOLDER
 
+
+########### utility methods ##############
 def allowed_file(filename):
     return '.' in filename and \
        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/', methods=['POST'])
+
+
+########### routes ##############
+@app.route('/classify', methods=['GET'])
+def classify():
+    # get the file info
+    img_info = request.get_json()
+    # supposing the json format to be as follows
+    '''
+    {
+        'data': []float (img_data)
+    }
+    '''
+    res = cls.predict(img_info)
+    return jsonify(
+        status='ok',
+        message='image prediction succesful'.format(filename),
+        pred='{}'.format(res))
+
+
+@app.route('/upload', methods=['POST'])
 def upload_file():
     # check if the post request has the file part
     print(request.files)
