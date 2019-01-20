@@ -52,7 +52,7 @@ def classify():
         filename = secure_filename(file.filename)
     img = load_image_data(file)
 
-    res = cls.predict(img)
+    res = cls.predict([img,img])
 
     #res = cls.predict(img_data)
     return jsonify(
