@@ -30,7 +30,7 @@ def make_request():
     r = requests.get('http://chipos.pythonanywhere.com/classify', data=load_image_data())
     print(r.json())
 
-    # supposed to be 201
+    # supposed to be 20
 
 if __name__ == '__main__':
     make_request()
