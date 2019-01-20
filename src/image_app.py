@@ -19,7 +19,7 @@ MODEL_FILE_PATH = os.path.join(app.config['ROOT_PATH'], 'src', MODEL_FILE)
 #app.config['IMAGES_FOLDER'] = IMAGES_FOLDER
 
 # load the model from disk
-csl = pickle.load(open(MODEL_FILE_PATH, 'rb'))
+cls = pickle.load(open(MODEL_FILE_PATH, 'rb'))
 
 ########### utility methods ##############
 def allowed_file(filename):
