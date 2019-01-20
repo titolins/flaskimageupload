@@ -29,7 +29,7 @@ def allowed_file(filename):
     return '.' in filename and \
        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def load_image_data(file_path):
+def load_image_data(file):
     pic = Image.open(file)
     img_data = list(np.array(pic).flatten())
     for i in range(N_COLS - len(img_data)):
