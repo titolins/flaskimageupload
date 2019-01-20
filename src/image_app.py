@@ -33,7 +33,7 @@ def load_image_data(file_path):
 
 
 ########### routes ##############
-@app.route('/classify', methods=['GET'])
+@app.route('/classify', methods=['POST'])
 def classify():
     print(request.files)
     file = request.files['image'] if 'image' in request.files else None
