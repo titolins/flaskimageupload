@@ -50,6 +50,8 @@ def classify():
     print('===========================================')
     print(file)
     print(type(file))
+    img = Image.open(file)
+    print(img)
     print('===========================================')
     #res = cls.predict(img_data)
     return jsonify(
