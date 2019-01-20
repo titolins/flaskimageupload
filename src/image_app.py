@@ -45,8 +45,12 @@ def classify():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
 
+    print('===========================================')
+    print('DEBUG')
+    print('===========================================')
     print(file)
     print(type(file))
+    print('===========================================')
     #res = cls.predict(img_data)
     return jsonify(
         status='ok',
