@@ -7,7 +7,7 @@ import pickle
 
 #IMAGES_FOLDER = '../images'
 # pythonanywhere path
-IMAGES_FOLDER = '/home/chipos/flaskimageupload/images'
+#IMAGES_FOLDER = '/home/chipos/flaskimageupload/images'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 MODEL_FILE = 'finalized_model.pkl'
 
@@ -15,8 +15,9 @@ MODEL_FILE = 'finalized_model.pkl'
 csl = pickle.load(open(MODEL_FILE, 'rb'))
 
 # create flask app and set config
-app = Flask(__name__)
-app.config['IMAGES_FOLDER'] = IMAGES_FOLDER
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('config.py')
+#app.config['IMAGES_FOLDER'] = IMAGES_FOLDER
 
 
 ########### utility methods ##############
