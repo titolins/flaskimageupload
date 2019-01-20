@@ -11,14 +11,15 @@ import pickle
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 MODEL_FILE = 'finalized_model.pkl'
 
-# load the model from disk
-csl = pickle.load(open(MODEL_FILE, 'rb'))
 
 # create flask app and set config
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')
+MODEL_FILE_PATH = os.path.join(app.config['ROOT_PATH'], 'src', MODEL_FILE)
 #app.config['IMAGES_FOLDER'] = IMAGES_FOLDER
 
+# load the model from disk
+csl = pickle.load(open(MODEL_FILE, 'rb'))
 
 ########### utility methods ##############
 def allowed_file(filename):
