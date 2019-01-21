@@ -30,70 +30,65 @@ def allowed_file(filename):
        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def load_image_data(file):
+    # this is awful...
     pic = Image.open(file)
     img_data = list(np.array(pic).flatten())
     for i in range(N_COLS - len(img_data)):
         img_data.append(0)
-
     return np.array(img_data)
 
+def check_request_file():
+    if 'image' not in request.files or request.files['image'].filename is '':
+        raise FileNotFoundException(
+            'No \'image\' in request or empty filename')
+    return request.files['image']
+
+def build_error_response(e):
+    return jsonify(
+        status='error',
+        message='{}'.format(e)
+    )
 
 ########### routes ##############
 @app.route('/classify', methods=['POST'])
 def classify():
-    print(request.files)
-    file = request.files['image'] if 'image' in request.files else None
-    if file is None or request.files['image'].filename == '':
+    try:
+        file = check_request_file()
+        img = load_image_data(file)
+        res = cls.predict([img,img])
+        #res = cls.predict(img_data)
         return jsonify(
-            status='error',
-            message='image is None or filename = \'\''
-        )
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-    img = load_image_data(file)
-
-    res = cls.predict([img,img])
-
-    #res = cls.predict(img_data)
-    return jsonify(
-        status='ok',
-        message='image prediction succesful'.format(res),
-        pred='{}'.format(res))
+            status='ok',
+            message='image prediction succesful'.format(res),
+            pred='{}'.format(res))
+    except FileNotFoundException as e:
+        return build_error_response(e)
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     # check if the post request has the file part
-    print(request.files)
-    file = request.files['image'] if 'image' in request.files else None
-    if file is None or request.files['image'].filename == '':
-        return jsonify(
-            status='error',
-            message='image is None or filename = \'\''
-        )
+    try:
+        file = check_request_file()
+        if allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(
+                app.config['ROOT_PATH'], app.config['IMAGES_FOLDER'], filename))
+            '''
+            #TO GET THE PATH, USE THIS METHOD BELOW
+            return jsonify(
+                status='ok',
+                message='image uploaded to `/images/{}`'.format(filename),
+                path='/images/{}'.format(filename))
 
-    #######################################
-    #######################################
-    print(file)
-    attrs = vars(file)
-    print(''.join(['file.{} = {}\n'.format(k, v) for k,v in attrs.items()]))
-    #######################################
-    #######################################
+            #TO GET THE IMAGE, USE THIS OTHER ONE (BELOW)
+            '''
+            return send_from_directory(app.config['IMAGES_FOLDER'], filename)
+        else:
+            return build_error_response('filename not allowed')
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-    file.save(os.path.join(
-        app.config['ROOT_PATH'], app.config['IMAGES_FOLDER'], filename))
-    '''
-    #TO GET THE PATH, USE THIS METHOD BELOW
-    return jsonify(
-        status='ok',
-        message='image uploaded to `/images/{}`'.format(filename),
-        path='/images/{}'.format(filename))
-
-    #TO GET THE IMAGE, USE THIS OTHER ONE (BELOW)
-    '''
-    return send_from_directory(app.config['IMAGES_FOLDER'], filename)
+    except FileNotFoundException as e:
+        return build_error_response(e)
 
 
 @app.route('/images/<filename>')
