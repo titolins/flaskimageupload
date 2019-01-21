@@ -1,4 +1,5 @@
 #!/usr/bin/bash
-echo $1
+. ./test_functions.sh
 
-curl -X POST -F "image=@$1" http://chipos.pythonanywhere.com/classify
+URL=$(build_url classify)
+curl -X POST -F "image=@$1" "$URL"
